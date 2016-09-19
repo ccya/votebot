@@ -125,8 +125,7 @@ class VoteBot:
 			logging.debug("[vote]ip: " + proxy + " result: " + result)
 			self.totalVote+=1
 		except Exception as e:
-			logging.error("[vote]ip: "+ proxy)
-			logging.error(e)
+			logging.debug(e)
 		
 	def controller(self):
 		self.getProxy()
@@ -134,6 +133,7 @@ class VoteBot:
 		self.getProxy3()
 		self.getProxy4()
 		logging.info("[controller]total proxy: " + str(len(self.proxyList)))
+		logging.info("[controller]start voting")
 		for ip in self.proxyList:
 			self.vote(ip,random.choice(self.userAgents))
 		logging.info("[controller]usagerate: " + str(float(self.totalVote)/len(self.proxyList)))
