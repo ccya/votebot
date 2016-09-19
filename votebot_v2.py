@@ -9,9 +9,8 @@ import json
 class VoteBot:
 	def __init__(self):
 		self.totalVote = 0
-		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot.log',level=logging.DEBUG)
+		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot.log',level=logging.INFO)
 		logging.info("[init] starting a new voting round")
-		self.proxySource = "http://cn-proxy.com/"
 		self.proxyList = []
 		self.userAgents = ["Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWe...chrome/45.0.2454.101 Safari/537.36",
 		"Mozilla / 5.0(Windows NT 6.1) AppleWebKit / 537.....likeGecko) Chrome / 45.0.2454.101Safari/ 537.36",
@@ -23,7 +22,7 @@ class VoteBot:
 		]
 	
 	def getProxy(self):
-		req = urllib2.Request(self.proxySource)
+		req = urllib2.Request("http://cn-proxy.com/")
 		try: 
 			response = urllib2.urlopen(req)
 			html = response.read()
@@ -77,7 +76,27 @@ class VoteBot:
 					time = cols[2].string.encode('utf-8')[:3]
 					if float(time) < 3.0:
 						self.proxyList.append(ip)
-						logging.debug("[getProxy2]" + ip)
+						logging.debug("[getProxy3]" + ip)
+			except urllib2.URLError as e:
+				logging.error(e.reason)
+
+	def getProxy4(self):
+		for i in xrange(1,11):
+			try:
+				req = urllib2.Request("http://www.ip3366.net/?stype=1&page=" + str(i))
+				response = urllib2.urlopen(req)
+				html = response.read()
+				response.close()
+				soup = BeautifulSoup(html,"html.parser")
+				table = soup.select("#list")[0]
+				rows = table.find_all('tr')
+				for i in xrange(1,len(rows)):
+					cols = rows[i].find_all('td')
+					ip = (cols[0].string+":" + cols[1].string).encode('utf-8')
+					time = (cols[6].string)[:-1].encode('utf-8')
+					if float(time) < 4.0:
+						self.proxyList.append(ip)
+						logging.debug("[getProxy4]" + ip)
 			except urllib2.URLError as e:
 				logging.error(e.reason)
 
@@ -99,7 +118,7 @@ class VoteBot:
 		opener = urllib2.build_opener(proxy_support)
 		urllib2.install_opener(opener)
 		try:
-			votePage = urllib2.urlopen(req,timeout=8)
+			votePage = urllib2.urlopen(req,timeout=5)
 			s = votePage.read()
 			votePage.close()
 			result = s[s.find("(")+1:s.find(")")]
@@ -113,9 +132,11 @@ class VoteBot:
 		self.getProxy()
 		self.getProxy2()
 		self.getProxy3()
+		self.getProxy4()
 		logging.info("[controller]total proxy: " + str(len(self.proxyList)))
 		for ip in self.proxyList:
 			self.vote(ip,random.choice(self.userAgents))
+		logging.info("[controller]usagerate: " + str(float(self.totalVote)/len(self.proxyList)))
 		logging.info("[controller]totalvote: " + str(self.totalVote))
 
 
