@@ -61,6 +61,27 @@ class VoteBot:
 			except urllib2.URLError as e:
 				logging.error(e.reason)
 
+	def getProxy3(self):
+		for i in xrange(1,6):
+			try:
+				req = urllib2.Request("http://www.getproxy.jp/en/china/" + str(i))
+				response = urllib2.urlopen(req)
+				html = response.read()
+				response.close()
+				soup = BeautifulSoup(html,"html.parser")
+				table = soup.select("#mytable")[0]
+				rows = table.find_all('tr')
+				for i in xrange(1,len(rows)):
+					cols = rows[i].find_all('td')
+					ip = (cols[0].string).encode('utf-8')
+					time = cols[2].string.encode('utf-8')[:3]
+					if float(time) < 3.0:
+						self.proxyList.append(ip)
+						logging.debug("[getProxy2]" + ip)
+			except urllib2.URLError as e:
+				logging.error(e.reason)
+
+
 	def vote(self,proxy,userAgent):
 		# http://sinahn.cc/Index/doTJYVoting?wid=7369427&callback=jQuery17105178477708445559_1474271335103&_=1474274701840
 		urlPram = urllib.urlencode({
@@ -91,6 +112,7 @@ class VoteBot:
 	def controller(self):
 		self.getProxy()
 		self.getProxy2()
+		self.getProxy3()
 		logging.info("[controller]total proxy: " + str(len(self.proxyList)))
 		for ip in self.proxyList:
 			self.vote(ip,random.choice(self.userAgents))
