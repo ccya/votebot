@@ -39,8 +39,8 @@ class VoteBot:
 					if bkground == "#00dd00":
 						self.proxyList.append(ip)
 						logging.debug("[getProxy]" + ip)	
-		except urllib2.URLError as e:
-			logging.error(e.reason)
+		except Exception as e:
+			logging.error(e)
 
 	def getProxy2(self):
 		for i in xrange(1,11):
@@ -57,8 +57,8 @@ class VoteBot:
 					ip = (cols[0].string + ":" + cols[1].string).encode('utf-8')
 					self.proxyList.append(ip)
 					logging.debug("[getProxy2]" + ip)
-			except urllib2.URLError as e:
-				logging.error(e.reason)
+			except Exception as e:
+				logging.error(e)
 
 	def getProxy3(self):
 		for i in xrange(1,6):
@@ -77,8 +77,8 @@ class VoteBot:
 					if float(time) < 3.0:
 						self.proxyList.append(ip)
 						logging.debug("[getProxy3]" + ip)
-			except urllib2.URLError as e:
-				logging.error(e.reason)
+			except Exception as e:
+				logging.error(e)
 
 	def getProxy4(self):
 		for i in xrange(1,11):
@@ -97,9 +97,8 @@ class VoteBot:
 					if float(time) < 4.0:
 						self.proxyList.append(ip)
 						logging.debug("[getProxy4]" + ip)
-			except urllib2.URLError as e:
-				logging.error(e.reason)
-
+			except Exception as e:
+				logging.error(e)
 
 	def vote(self,proxy,userAgent):
 		# http://sinahn.cc/Index/doTJYVoting?wid=7369427&callback=jQuery17105178477708445559_1474271335103&_=1474274701840
