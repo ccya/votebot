@@ -10,7 +10,7 @@ import threading
 class VoteBot:
 	def __init__(self):
 		self.totalVote = 0
-		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot.log',level=logging.INFO)
+		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebotAbu.log',level=logging.INFO)
 		self.proxyList = []
 		self.userAgents = ["Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWe...chrome/45.0.2454.101 Safari/537.36",
 		"Mozilla / 5.0(Windows NT 6.1) AppleWebKit / 537.....likeGecko) Chrome / 45.0.2454.101Safari/ 537.36",
@@ -56,13 +56,13 @@ class VoteBot:
 			s = votePage.read()
 			votePage.close()
 			result = s[s.find("(")+1:s.find(")")]
-			logging.info("[vote]result: " + result)
+			logging.info("[voteAbu]result: " + result)
 			self.totalVote+=1
 		except Exception as e:
 			logging.debug(e)
 		
 	def controller(self):
-		logging.info("[controller]start voting")
+		logging.info("[voteAbu]start voting")
 		self.vote(random.choice(self.userAgents))
 
 		
