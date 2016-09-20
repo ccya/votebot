@@ -8,7 +8,7 @@ import json
 class VoteBot:
 	def __init__(self):
 		self.totalVote = 0
-		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot.log',level=logging.INFO)
+		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot_mipu.log',level=logging.INFO)
 		logging.info("[init] starting a new voting round")
 		self.proxyList = []
 		self.userAgents = ["Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWe...chrome/45.0.2454.101 Safari/537.36",
@@ -21,7 +21,7 @@ class VoteBot:
 		]
 	
 	def getProxy(self):
-		req = urllib2.Request("http://proxy.mimvp.com/api/fetch.php?orderid=860160920082949123&num=1000&result_fields=1")
+		req = urllib2.Request("http://proxy.mimvp.com/api/fetch.php?orderid=860160920082949123&num=300&country_group=1&ping_time=0.3&result_fields=1")
 		try: 
 			response = urllib2.urlopen(req)
 			html = response.read()
@@ -62,8 +62,9 @@ class VoteBot:
 	def controller(self):
 		self.getProxy()
 		for i in xrange(len(self.proxyList)):
+			if i == len(self.proxyList)/2:
+				logging.info("[controller]progress: 50%")
 			self.vote(self.proxyList[i],random.choice(self.userAgents))
-		# logging.info("[controller]usagerate: " + str(float(self.totalVote)/len(self.proxyList)))
 		logging.info("[controller]totalvote: " + str(self.totalVote))
 
 
