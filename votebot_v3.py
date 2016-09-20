@@ -4,13 +4,12 @@ import urllib
 import random
 import logging
 import json
-import threading
-
 
 class VoteBot:
 	def __init__(self):
 		self.totalVote = 0
-		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebotAbu.log',level=logging.INFO)
+		logging.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',filename='votebot.log',level=logging.INFO)
+		logging.info("[init] starting a new voting round")
 		self.proxyList = []
 		self.userAgents = ["Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWe...chrome/45.0.2454.101 Safari/537.36",
 		"Mozilla / 5.0(Windows NT 6.1) AppleWebKit / 537.....likeGecko) Chrome / 45.0.2454.101Safari/ 537.36",
@@ -20,36 +19,21 @@ class VoteBot:
 		"User-Agent: Mozilla/5.0 (Windows NT 10.0) AppleWebKi.....36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586",
 		"Mozilla/5.0 (Windows NT 10.0; WOW64) Apple.....KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"
 		]
-
-	def change(self):
-		req = urllib2.Request("http://proxy.abuyun.com/switch-ip")
-
-		proxyHost = "proxy.abuyun.com"
-		proxyPort = "9010"
-		proxyUser = "H75L3ZTG3Y5E315P"
-		proxyPass = "2362FFBD452BCE33"
-		proxyMeta = "http://%(user)s:%(pass)s@%(host)s:%(port)s" % {
-			"host" : proxyHost,
-			"port" : proxyPort,
-			"user" : proxyUser,
-			"pass" : proxyPass,
-		}
-		proxy_handler = urllib2.ProxyHandler({
-			"http"  : proxyMeta,
-			"https" : proxyMeta,
-		})
-		opener = urllib2.build_opener(proxy_handler)
-		urllib2.install_opener(opener)
-		try:
-			votePage = urllib2.urlopen(req,timeout=5)
-			s = votePage.read()
-			votePage.close()
-			# logging.info("[voteAbu]result: " + s)
+	
+	def getProxy(self):
+		req = urllib2.Request("http://proxy.mimvp.com/api/fetch.php?orderid=860160920082949123&num=1000&result_fields=1")
+		try: 
+			response = urllib2.urlopen(req)
+			html = response.read()
+			response.close()
+			lst = html.split('\n')
+			for each in lst:
+				self.proxyList.append(each[:-1])
 		except Exception as e:
-			logging.debug(e)
+			logging.error(e)
 
-
-	def vote(self,userAgent):
+	
+	def vote(self,proxy,userAgent):
 		# http://sinahn.cc/Index/doTJYVoting?wid=7369427&callback=jQuery17105178477708445559_1474271335103&_=1474274701840
 		urlPram = urllib.urlencode({
 				'wid':'7369427',
@@ -62,37 +46,26 @@ class VoteBot:
 		req.add_header("Referer",'http://henan.sina.com.cn/city/zt/zmrmtjy/index.shtml')
 		req.add_header("Host",'sinahn.cc')
 
-		proxyHost = "proxy.abuyun.com"
-		proxyPort = "9010"
-		proxyUser = "H75L3ZTG3Y5E315P"
-		proxyPass = "2362FFBD452BCE33"
-		proxyMeta = "http://%(user)s:%(pass)s@%(host)s:%(port)s" % {
-			"host" : proxyHost,
-			"port" : proxyPort,
-			"user" : proxyUser,
-			"pass" : proxyPass,
-		}
-		proxy_handler = urllib2.ProxyHandler({
-			"http"  : proxyMeta,
-			"https" : proxyMeta,
-		})
-		opener = urllib2.build_opener(proxy_handler)
+		proxy_support = urllib2.ProxyHandler({"http":proxy})
+		opener = urllib2.build_opener(proxy_support)
 		urllib2.install_opener(opener)
 		try:
 			votePage = urllib2.urlopen(req,timeout=5)
 			s = votePage.read()
 			votePage.close()
 			result = s[s.find("(")+1:s.find(")")]
-			logging.info("[voteAbu]result: " + result)
+			logging.debug("[vote]ip: " + proxy + " result: " + result)
 			self.totalVote+=1
 		except Exception as e:
 			logging.debug(e)
 		
 	def controller(self):
-		# logging.info("[voteAbu]start voting")
-		threading.Timer(5.0, self.controller).start()
-		self.vote(random.choice(self.userAgents))
-		self.change()
+		self.getProxy()
+		for i in xrange(len(self.proxyList)):
+			self.vote(self.proxyList[i],random.choice(self.userAgents))
+		# logging.info("[controller]usagerate: " + str(float(self.totalVote)/len(self.proxyList)))
+		logging.info("[controller]totalvote: " + str(self.totalVote))
+
 
 		
 bot = VoteBot()
