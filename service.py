@@ -48,6 +48,9 @@ def stop():
 		fl.write(msg+"\n")
 	fl.close()
 
+	# rename old file
+	os.rename("votebotAbu.log","votebotAbu"+endtime)
+
 
 def start():
 	votebotAbu.VoteBot().starter()
