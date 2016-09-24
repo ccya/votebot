@@ -88,12 +88,12 @@ class VoteBot:
 		except Exception as e:
 			logging.debug(e)
 		
-	def controller(self):
-		# logging.info("[voteAbu]start voting")
-		threading.Timer(5.0, self.controller).start()
+	def starter(self,interval):
+		print interval
+		threading.Timer(float(interval), self.starter).start()
 		self.vote(random.choice(self.userAgents))
 		self.change()
 
 		
-bot = VoteBot()
-bot.controller()
+# bot = VoteBot()
+# bot.controller()

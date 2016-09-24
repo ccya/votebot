@@ -52,13 +52,13 @@ def stop():
 	os.rename("votebotAbu.log","votebotAbu"+endtime)
 
 
-def start():
-	votebotAbu.VoteBot().starter()
+def start(interval):
+	votebotAbu.VoteBot().starter(interval)
 
 def main():
 	arg = sys.argv
 	if  "start" == arg[1]:
-		start()
+		start(arg[2])
 	elif "stop" == arg[1]:
 		stop()
 
