@@ -89,7 +89,7 @@ class VoteBot:
 			logging.debug(e)
 		
 	def starter(self,interval):
-		threading.Timer(float(interval), self.starter).start()
+		threading.Timer(float(interval), self.starter,args=(float(interval),)).start()
 		self.vote(random.choice(self.userAgents))
 		self.change()
 
